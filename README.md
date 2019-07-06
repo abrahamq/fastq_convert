@@ -6,7 +6,7 @@ based on https://github.com/frenzymadness/FastQ_converter
 
 
 # Usage:
-python  input <output>
+python fqtocsv.py input_file output_file
 
 
 
