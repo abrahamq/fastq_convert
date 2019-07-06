@@ -1,20 +1,20 @@
 import sys
-import csv
 
 def help():
     print('Usage: {} <input_file> [output_file]'.format(sys.argv[0]))
 
 
-def convert_to_fastq(in_file, out_file):
-    # throw away the first line (with headings)
-    in_file.readline()
-    reader = csv.reader(in_file)
-    
-    for line in reader:
-        for i, col in enumerate(line):
-            out_file.write(col + '\n')
-            if i == 1:
-                out_file.write('+\n')
+def convert_to_csv(in_file, out_file):
+    out_file.write(u'"SeqID","sequence","quality"\n')
+    for line in in_file:
+        if not line.startswith('@'):
+            continue
+        seq_id = line.strip()
+        sequence = next(in_file).strip()
+        next(in_file)
+        quality = next(in_file).strip()
+        out_file.write(u'"{}","{}","{}"\n'.format(seq_id, sequence, quality))
+
 
 def main():
     if len(sys.argv) < 2:
@@ -27,11 +27,11 @@ def main():
             out_file = sys.argv[2]
         else:
             # else make it from input file name
-            out_file = '.'.join(in_file.split('.')[:-1]) + '.fastq'
+            out_file = '.'.join(in_file.split('.')[:-1]) + '.csv'
 
         with open(in_file) as infd:
             with open(out_file, 'w') as outfd:
-                convert_to_fastq(infd, outfd)
+                convert_to_csv(infd, outfd)
 
 
 if __name__ == '__main__':
